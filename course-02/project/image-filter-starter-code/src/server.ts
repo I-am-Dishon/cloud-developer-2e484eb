@@ -45,12 +45,10 @@ const imageFolder = './src/util/tmp/';
       res.sendFile(path);
 
       var files = []
-  
-      fs.readdirSync(imageFolder).forEach((file: any) => {
-        var ow = imageFolder + file
-        var realPath = resolve(ow);
-        files.push(realPath)
-      });
+      
+      console.log(path); 
+
+
 
       res.on('finish', () => deleteLocalFiles([path]));
     } catch {
