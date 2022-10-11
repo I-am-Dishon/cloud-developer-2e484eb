@@ -42,7 +42,7 @@ const imageFolder = './src/util/tmp/';
       }
       console.log(image_url);
       const path = await filterImageFromURL(image_url);
-      res.sendFile(path);
+      res.status(200).sendFile(path);
 
       var files = []
       
