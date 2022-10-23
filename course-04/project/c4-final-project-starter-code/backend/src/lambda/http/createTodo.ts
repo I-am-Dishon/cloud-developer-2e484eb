@@ -4,9 +4,9 @@ import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 
-import { createTodo } from '../../helpers/todosAcess'
+import { createTodo } from '../../dataLayer/todosAcess'
 
-import { todoBuilder } from '../../helpers/todos'
+import { todoBuilder } from '../../businessLayer/todos'
 
 
 export const handler = middy(
@@ -24,7 +24,6 @@ export const handler = middy(
       })
     }
   }
-  
 )
 
 handler.use(

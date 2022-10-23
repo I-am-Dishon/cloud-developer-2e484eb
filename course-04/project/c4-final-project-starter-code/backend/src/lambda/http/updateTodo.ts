@@ -4,10 +4,10 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors, httpErrorHandler } from 'middy/middlewares'
 
-import {  updateTodo } from '../../helpers/todosAcess'
+import {  updateTodo } from '../../dataLayer/todosAcess'
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 
-import { updateTodoBuilder } from '../../helpers/todos'
+import { updateTodoBuilder } from '../../businessLayer/todos'
 
 import { getUserId } from '../utils'
 

@@ -6,7 +6,9 @@ service: serverless-todo-app
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
-  - serverless-plugin-tracing
+  - serverless-plugin-tracing 
+  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
 
 provider:
   name: aws
@@ -30,6 +32,43 @@ provider:
     AUTH_0_SECRET_ID: Auth0Secret-${self:provider.stage}
     AUTH_0_SECRET_FIELD: zoy9TvUBCjcVUOTYhwWdlzsGF0kCHUd_oQvTtkENrWZvXZKs2MjlHuQAdabqKX7H
 
+custom:
+
+  documentation:
+    api:
+      info:
+        version: '1.0.0'
+        title: serverless-api
+        description: serverless-api
+    models:
+      - name: CreateTodoRequest
+        contentType: "application/json"
+        schema:
+          required:
+            - name
+            - dueDate
+          properties:
+            name:
+              minLength: 1
+              type: string
+            dueDate:
+              type: string
+      - name: UpdateTodoRequest
+        contentType: "application/json"
+        schema:
+          required:
+            - name
+            - dueDate
+            - done
+          properties:
+            name:
+              minLength: 1
+              type: string
+            dueDate:
+              type: string
+            done:
+              type: boolean
+
   logs:
     # Enable API Gateway logs
     restApi: true
@@ -42,7 +81,6 @@ provider:
             - xray:PutTelemetryRecords
             - xray:PutTraceSegments
           Resource: "*"
-
 
 functions:
 
@@ -78,6 +116,12 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
+          documentation:
+            summary: "Create a new todo item"
+            description: "Create a new todo item"
+            requestModels:
+              "application/json": CreateTodoRequest
+          reqValidatorName: RequestBodyValidator
           request:
             schemas:
               application/json: ${file(models/create-todo-model.json)}
@@ -97,6 +141,12 @@ functions:
           cors: true
           authorizer: Auth
           path: todos/{todoId}
+          documentation:
+            summary: "Create a new todo item"
+            description: "Create a new todo item"
+            requestModels:
+              "application/json": CreateTodoRequest
+          reqValidatorName: RequestBodyValidator
           request:
             schemas:
               application/json: ${file(models/update-todo-model.json)}
@@ -167,6 +217,16 @@ resources:
         RestApiId:
           Ref: ApiGatewayRestApi
     
+    RequestBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'request-body-validator'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
+
+
     # TODO: Create a DynamoDB table with local secondary index and a composite key
     TodosTable:
       Type: AWS::DynamoDB::Table

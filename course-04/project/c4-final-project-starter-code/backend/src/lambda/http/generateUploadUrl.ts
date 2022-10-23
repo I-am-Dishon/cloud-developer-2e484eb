@@ -3,7 +3,7 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors, httpErrorHandler } from 'middy/middlewares'
-import { getTodoById, updateTodoURL } from '../../helpers/todosAcess'
+import { getTodoById, updateTodoURL } from '../../dataLayer/todosAcess'
 
 import { getUploadUrl } from '../../helpers/attachmentUtils'
 // import { getUserId } from '../utils'
@@ -16,9 +16,10 @@ export const handler = middy(
     // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
     const todo = await getTodoById(todoId)
 
-    todo.attachmentUrl = `https://${bucketName}.s3.amazonaws.com/${todoId}.png`
+    todo.attachmentUrl = `https://${bucketName}.s3.amazonaws.com/${todoId}`
 
     console.log(todo)
+    // await processImage(todo.attachmentUrl)
     await updateTodoURL(todo)
     
 
